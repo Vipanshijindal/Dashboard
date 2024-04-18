@@ -1,20 +1,21 @@
-import PropTypes from 'prop-types';
+import React from "react";
 
-const Sidebar = ({showFirmHandler,showProductHandler,showAllProductsHandler,showFirmTitle}) => {
+const SideBar = ({
+  showFirmHandler,
+  showProductHandler,
+  showAllProductsHandler,
+  showFirmTitle
+}) => {
   return (
-    <div className='sidebarSection'>
+    <div className="sideBarSection">
       <ul>
-        {showFirmTitle ? <li onClick={showFirmHandler}>Add Firm</li>:"" }
-       
+        {showFirmTitle ? <li onClick={showFirmHandler}>Add Firm</li> : "" }
         <li onClick={showProductHandler}>Add Product</li>
         <li onClick={showAllProductsHandler}>All Products</li>
         <li>User Details</li>
       </ul>
-      </div>)
-}
-// Sidebar.propTypes = {
-//   showFirmHandler: PropTypes.string.isRequired,
-//   showProductHandler: PropTypes.string.isRequired
-// }
+    </div>
+  );
+};
 
-export default Sidebar;
+export default SideBar;

@@ -1,82 +1,84 @@
-import { useState } from "react";
-import { API_URL } from "../../data/ApiPath";
-const Register = ({showLoginHandler}) => {
+import React, { useState } from 'react';
+import { API_URL } from '../../data/ApiPath';
+import { ThreeCircles } from 'react-loader-spinner';
+
+const Register = ({ showLoginHandler }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set loading to false initially
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when the request starts
     try {
       const response = await fetch(`${API_URL}/vendor/register`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password })
       });
-   
+
       const data = await response.json();
-      
       if (response.ok) {
         console.log(data);
         setUsername("");
         setEmail("");
         setPassword("");
-        alert("vendor registered successfully");
+        alert("Vendor registered successfully");
         showLoginHandler();
-      }else{
-        console.log(data.error)
+      } else {
+        setError(data.error);
+        alert("Registration Failed, Contact Admin")
       }
     } catch (error) {
-      console.log("Registration failed", error);
-      alert("Registration Failed");
+      console.error("Registration failed", error);
+      alert("Registration failed");
+    } finally {
+      setLoading(false); 
     }
   };
 
   return (
     <div className="registerSection">
-      <form className="authForm" onSubmit={handleSubmit}>
-        <h3>Vendor Register</h3>
-        <label>Username</label>
-        <input
-          type="text"
-          name="username"
-          onChange={(e) => {
-            setUsername(e.target.value);
-          }}
-          value={username}
-          placeholder="Enter your name"
-        />
-        <br />
-        <label>Email</label>
-        <input
-          type="text"
-          name="email"
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-          value={email}
-          placeholder="Enter your email"
-        />
-        <br />
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-          
-          placeholder="Enter password"
-        />
-        <br />
+     {loading && 
+      <div className="loaderSection">
+      <ThreeCircles
+        visible={loading}
+        height={100}
+        width={100}
+        color="#4fa94d"
+        ariaLabel="three-circles-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+      />
+      <p>Hi, Your Registration under process</p>
+    </div>
+     }
+{!loading &&     <form className='authForm' onSubmit={handleSubmit} autoComplete='off'>
 
-        <div className="btnSubmit">
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+<h3>Vendor Register</h3>
+<label>Username</label>
+<input type="text" name='username' value={username} onChange={(e) => setUsername(e.target.value)} placeholder='enter your name' /><br />
+<label>Email</label>
+<input type="text" name='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='enter your email' /><br />
+<label>Password</label>
+<input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} name='password' placeholder='enter your password' /><br />
+<span className='showPassword'
+  onClick={handleShowPassword}
+>{showPassword ? 'Hide' : 'Show'}</span>
+<div className="btnSubmit">
+  <button type='submit'>Submit</button>
+</div>
+</form>}
+  
     </div>
   );
 };
